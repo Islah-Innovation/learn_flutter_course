@@ -6,7 +6,7 @@ class Products extends StatelessWidget {
   Products([this.products = const []]) {
     print('[Products Widget] Constructor');
   }
-
+  
   Widget _buildProductItem(BuildContext context, int index) {
     return Card(
       child: Column(
