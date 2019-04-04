@@ -116,7 +116,7 @@ class _LocationInputState extends State<LocationInput> {
     _getStaticMap(address,
         geocode: false,
         lat: currentLocation.latitude,
-        lng: currentLocation.longitude);
+        lng: currentLocation.longitude);;
   }
 
   void _updateLocation() {
