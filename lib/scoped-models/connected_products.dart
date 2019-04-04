@@ -67,7 +67,7 @@ mixin ProductsModel on ConnectedProductsModel {
     };
     try {
       final http.Response response = await http.post(
-          'https://flutter-products.firebaseio.com/products.json',
+          'https://flutter-products-4a15a.firebaseio.com/products.json',
           body: json.encode(productData));
 
       if (response.statusCode != 200 && response.statusCode != 201) {
@@ -115,7 +115,7 @@ mixin ProductsModel on ConnectedProductsModel {
     };
     return http
         .put(
-            'https://flutter-products.firebaseio.com/products/${selectedProduct.id}.json',
+            'https://flutter-products-4a15a.firebaseio.com/products/${selectedProduct.id}.json',
             body: json.encode(updateData))
         .then((http.Response reponse) {
       _isLoading = false;
@@ -145,7 +145,7 @@ mixin ProductsModel on ConnectedProductsModel {
     notifyListeners();
     return http
         .delete(
-            'https://flutter-products.firebaseio.com/products/${deletedProductId}.json')
+            'https://flutter-products-4a15a.firebaseio.com/products/${deletedProductId}.json')
         .then((http.Response response) {
       _isLoading = false;
       notifyListeners();
@@ -161,7 +161,7 @@ mixin ProductsModel on ConnectedProductsModel {
     _isLoading = true;
     notifyListeners();
     return http
-        .get('https://flutter-products.firebaseio.com/products.json')
+        .get('https://flutter-products-4a15a.firebaseio.com/products.json')
         .then<Null>((http.Response response) {
       final List<Product> fetchedProductList = [];
       final Map<String, dynamic> productListData = json.decode(response.body);
