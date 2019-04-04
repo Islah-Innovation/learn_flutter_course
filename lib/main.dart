@@ -11,12 +11,13 @@ import './pages/product.dart';
 import './scoped-models/main.dart';
 import './models/product.dart';
 import './widgets/helpers/custom_route.dart';
+import './shared/global_config.dart';
 
 void main() {
   // debugPaintSizeEnabled = true;
   // debugPaintBaselinesEnabled = true;
   // debugPaintPointersEnabled = true;
-  MapView.setApiKey('AIzaSyCLQTG59usHzrIRrkQwmb8Pzu8OMqsa7ho');
+  MapView.setApiKey(apiKey);
   runApp(MyApp());
 }
 
