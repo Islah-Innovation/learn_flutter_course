@@ -71,7 +71,7 @@ class _ProductFABState extends State<ProductFAB> with TickerProviderStateMixin {
               alignment: FractionalOffset.topCenter,
               child: ScaleTransition(
                 scale: CurvedAnimation(
-                  parent: _controller,
+                  parent: _cotnroller,
                   curve: Interval(0.0, 0.5, curve: Curves.easeOut),
                 ),
                 child: FloatingActionButton(
