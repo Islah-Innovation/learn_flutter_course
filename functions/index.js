@@ -14,14 +14,14 @@ const uuid = require('uuid/v4');
 //  response.send("Hello from Firebase!");
 // });
 const gcconfig = {
-  projectId: 'your-project-id',
-  keyFilename: 'your-project-id.json'
+  projectId: 'flutter-products-4a15a',
+  keyFilename: 'flutter-products-4a15a.json'
 };
 
 const gcs = require('@google-cloud/storage')(gcconfig);
 
 fbAdmin.initializeApp({
-  credential: fbAdmin.credential.cert(require('./your-project-id.json'))
+  credential: fbAdmin.credential.cert(require('./flutter-products-4a15a.json'))
 });
 
 exports.storeImage = functions.https.onRequest((req, res) => {
@@ -55,7 +55,7 @@ exports.storeImage = functions.https.onRequest((req, res) => {
     });
 
     busboy.on('finish', () => {
-      const bucket = gcs.bucket('your-project-id.appspot.com');
+      const bucket = gcs.bucket('flutter-products-4a15a.appspot.com');
       const id = uuid();
       let imagePath = 'images/' + id + '-' + uploadData.name;
       if (oldImagePath) {
@@ -103,6 +103,6 @@ exports.deleteImage = functions.database
     const imageData = snapshot.val();
     const imagePath = imageData.imagePath;
 
-    const bucket = gcs.bucket('your-project-id.appspot.com');
+    const bucket = gcs.bucket('flutter-products-4a15a.appspot.com');
     return bucket.file(imagePath).delete();
   });

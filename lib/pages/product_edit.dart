@@ -6,12 +6,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 import '../widgets/helpers/ensure_visible.dart';
-import '../widgets/form_inputs/location.dart';
 import '../widgets/form_inputs/image.dart';
 import '../widgets/ui_elements/adapative_progress_indicator.dart';
 import '../models/product.dart';
 import '../scoped-models/main.dart';
-import '../models/location_data.dart';
 
 class ProductEditPage extends StatefulWidget {
   @override
@@ -25,8 +23,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
     'title': null,
     'description': null,
     'price': null,
-    'image': null,
-    'location': null
+    'image': null
   };
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final _titleFocusNode = FocusNode();
@@ -162,7 +159,6 @@ class _ProductEditPageState extends State<ProductEditPage> {
               SizedBox(
                 height: 10.0,
               ),
-              LocationInput(_setLocation, product),
               SizedBox(height: 10.0),
               ImageInput(_setImage, product),
               SizedBox(
@@ -184,10 +180,6 @@ class _ProductEditPageState extends State<ProductEditPage> {
     );
   }
 
-  void _setLocation(LocationData locData) {
-    _formData['location'] = locData;
-  }
-
   void _setImage(File image) {
     _formData['image'] = image;
   }
@@ -206,8 +198,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
           _descriptionTextController.text,
           _formData['image'],
           double
-              .parse(_priceTextController.text.replaceFirst(RegExp(r','), '.')),
-          _formData['location']).then((bool success) {
+              .parse(_priceTextController.text.replaceFirst(RegExp(r','), '.'))).then((bool success) {
         if (success) {
           Navigator
               .pushReplacementNamed(context, '/products')
@@ -235,7 +226,6 @@ class _ProductEditPageState extends State<ProductEditPage> {
         _descriptionTextController.text,
         _formData['image'],
         double.parse(_priceTextController.text.replaceFirst(RegExp(r','), '.')),
-        _formData['location'],
       ).then((_) => Navigator
           .pushReplacementNamed(context, '/products')
           .then((_) => setSelectedProduct(null)));

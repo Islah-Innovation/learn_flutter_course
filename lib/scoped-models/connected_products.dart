@@ -12,7 +12,7 @@ import 'package:http_parser/http_parser.dart';
 import '../models/product.dart';
 import '../models/user.dart';
 import '../models/auth.dart';
-import '../models/location_data.dart';
+import '../shared/global_config.dart' as conf;
 
 mixin ConnectedProductsModel on Model {
   List<Product> _products = [];
@@ -65,7 +65,7 @@ mixin ProductsModel on ConnectedProductsModel {
     final imageUploadRequest = http.MultipartRequest(
         'POST',
         Uri.parse(
-            'https://us-central1-flutter-products.cloudfunctions.net/storeImage'));
+            'https://us-central1-flutter-products-4a15a.cloudfunctions.net/storeImage'));
     final file = await http.MultipartFile.fromPath(
       'image',
       image.path,
@@ -98,7 +98,7 @@ mixin ProductsModel on ConnectedProductsModel {
   }
 
   Future<bool> addProduct(String title, String description, File image,
-      double price, LocationData locData) async {
+      double price) async {
     _isLoading = true;
     notifyListeners();
     final uploadData = await uploadImage(image);
@@ -115,14 +115,11 @@ mixin ProductsModel on ConnectedProductsModel {
       'userEmail': _authenticatedUser.email,
       'userId': _authenticatedUser.id,
       'imagePath': uploadData['imagePath'],
-      'imageUrl': uploadData['imageUrl'],
-      'loc_lat': locData.latitude,
-      'loc_lng': locData.longitude,
-      'loc_address': locData.address
+      'imageUrl': uploadData['imageUrl']
     };
     try {
       final http.Response response = await http.post(
-          'https://flutter-products.firebaseio.com/products.json?auth=${_authenticatedUser.token}',
+          'https://flutter-products-4a15a.firebaseio.com/products.json?auth=${_authenticatedUser.token}',
           body: json.encode(productData));
 
       if (response.statusCode != 200 && response.statusCode != 201) {
@@ -138,7 +135,6 @@ mixin ProductsModel on ConnectedProductsModel {
           image: uploadData['imageUrl'],
           imagePath: uploadData['imagePath'],
           price: price,
-          location: locData,
           userEmail: _authenticatedUser.email,
           userId: _authenticatedUser.id);
       _products.add(newProduct);
@@ -158,7 +154,7 @@ mixin ProductsModel on ConnectedProductsModel {
   }
 
   Future<bool> updateProduct(String title, String description, File image,
-      double price, LocationData locData) async {
+      double price) async {
     _isLoading = true;
     notifyListeners();
     String imageUrl = selectedProduct.image;
@@ -180,15 +176,12 @@ mixin ProductsModel on ConnectedProductsModel {
       'imageUrl': imageUrl,
       'imagePath': imagePath,
       'price': price,
-      'loc_lat': locData.latitude,
-      'loc_lng': locData.longitude,
-      'loc_address': locData.address,
       'userEmail': selectedProduct.userEmail,
       'userId': selectedProduct.userId
     };
     try {
       await http.put(
-          'https://flutter-products.firebaseio.com/products/${selectedProduct.id}.json?auth=${_authenticatedUser.token}',
+          'https://flutter-products-4a15a.firebaseio.com/products/${selectedProduct.id}.json?auth=${_authenticatedUser.token}',
           body: json.encode(updateData));
       _isLoading = false;
       final Product updatedProduct = Product(
@@ -198,7 +191,6 @@ mixin ProductsModel on ConnectedProductsModel {
           image: imageUrl,
           imagePath: imagePath,
           price: price,
-          location: locData,
           userEmail: selectedProduct.userEmail,
           userId: selectedProduct.userId);
       _products[selectedProductIndex] = updatedProduct;
@@ -219,7 +211,7 @@ mixin ProductsModel on ConnectedProductsModel {
     notifyListeners();
     return http
         .delete(
-            'https://flutter-products.firebaseio.com/products/$deletedProductId.json?auth=${_authenticatedUser.token}')
+            'https://flutter-products-4a15a.firebaseio.com/products/$deletedProductId.json?auth=${_authenticatedUser.token}')
         .then((http.Response response) {
       _isLoading = false;
       notifyListeners();
@@ -240,7 +232,7 @@ mixin ProductsModel on ConnectedProductsModel {
     notifyListeners();
     return http
         .get(
-            'https://flutter-products.firebaseio.com/products.json?auth=${_authenticatedUser.token}')
+            'https://flutter-products-4a15a.firebaseio.com/products.json?auth=${_authenticatedUser.token}')
         .then<Null>((http.Response response) {
       final List<Product> fetchedProductList = [];
       final Map<String, dynamic> productListData = json.decode(response.body);
@@ -257,10 +249,6 @@ mixin ProductsModel on ConnectedProductsModel {
             image: productData['imageUrl'],
             imagePath: productData['imagePath'],
             price: productData['price'],
-            location: LocationData(
-                address: productData['loc_address'],
-                latitude: productData['loc_lat'],
-                longitude: productData['loc_lng']),
             userEmail: productData['userEmail'],
             userId: productData['userId'],
             isFavorite: productData['wishlistUsers'] == null
@@ -294,7 +282,6 @@ mixin ProductsModel on ConnectedProductsModel {
         price: selectedProduct.price,
         image: selectedProduct.image,
         imagePath: selectedProduct.imagePath,
-        location: selectedProduct.location,
         userEmail: selectedProduct.userEmail,
         userId: selectedProduct.userId,
         isFavorite: newFavoriteStatus);
@@ -303,11 +290,11 @@ mixin ProductsModel on ConnectedProductsModel {
     http.Response response;
     if (newFavoriteStatus) {
       response = await http.put(
-          'https://flutter-products.firebaseio.com/products/${selectedProduct.id}/wishlistUsers/${_authenticatedUser.id}.json?auth=${_authenticatedUser.token}',
+          'https://flutter-products-4a15a.firebaseio.com/products/${selectedProduct.id}/wishlistUsers/${_authenticatedUser.id}.json?auth=${_authenticatedUser.token}',
           body: json.encode(true));
     } else {
       response = await http.delete(
-          'https://flutter-products.firebaseio.com/products/${selectedProduct.id}/wishlistUsers/${_authenticatedUser.id}.json?auth=${_authenticatedUser.token}');
+          'https://flutter-products-4a15a.firebaseio.com/products/${selectedProduct.id}/wishlistUsers/${_authenticatedUser.id}.json?auth=${_authenticatedUser.token}');
     }
     if (response.statusCode != 200 && response.statusCode != 201) {
       final Product updatedProduct = Product(
@@ -317,7 +304,6 @@ mixin ProductsModel on ConnectedProductsModel {
           price: selectedProduct.price,
           image: selectedProduct.image,
           imagePath: selectedProduct.imagePath,
-          location: selectedProduct.location,
           userEmail: selectedProduct.userEmail,
           userId: selectedProduct.userId,
           isFavorite: !newFavoriteStatus);
@@ -364,13 +350,13 @@ mixin UserModel on ConnectedProductsModel {
     http.Response response;
     if (mode == AuthMode.Login) {
       response = await http.post(
-        'https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=AIzaSyDRNWISSlMAV8cduZYT9sEVKhRx6qdwJcc',
+        'https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=${conf.apiKey}',
         body: json.encode(authData),
         headers: {'Content-Type': 'application/json'},
       );
     } else {
       response = await http.post(
-        'https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=AIzaSyDRNWISSlMAV8cduZYT9sEVKhRx6qdwJcc',
+        'https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=${conf.apiKey}',
         body: json.encode(authData),
         headers: {'Content-Type': 'application/json'},
       );
